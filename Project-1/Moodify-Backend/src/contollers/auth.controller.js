@@ -58,53 +58,22 @@ async function registerController(req,res){
 
 
 async function loginController(req,res){
-    const {username,email,password} = req.body
+    const { email, password } = req.body
 
-    const checkUserExit = await userModel.findOne({
-        $or : [
-            {
-                username
-            },
+    const user = await userModel.findOne({ email }).select("+password")
+    if(!user) return res.status(400).json({ message:"Invalid Credential" })
 
-            {
-                email
-            }
-        ]
-    }).select("+password")
-    
-    if(!checkUserExit){
-        return res.status(400).json({
-            message : "Invalid Credential"
-        })
-    }
+    const isMatch = await bcrypt.compare(password,user.password)
+    if(!isMatch) return res.status(400).json({ message:"Invalid Credential" })
 
-    const hashPass = await bcrypt.compare(password,checkUserExit.password)
+    const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWTSECRET, { expiresIn:"1d" })
 
-    if(!hashPass){
-        return res.status(400).json({
-            message : "Invalid Credential"
-        })
-    }
+    res.cookie("token", token, { httpOnly:true, sameSite:"lax", maxAge:24*60*60*1000 })
 
-    const token = jwt.sign({
-        id : checkUserExit._id,
-        username : checkUserExit.username
-    },process.env.JWTSECRET,{
-        expiresIn : "1d"
+    res.status(200).json({
+        message:"User login Successfully",
+        user: { id:user._id, username:user.username, email:user.email }
     })
-
-    res.cookie("token",token)
-
-    res.status(201).json({
-        message : "User login Successfully",
-        user :{
-            id : checkUserExit._id,
-            username : checkUserExit.username,
-            email : checkUserExit.email
-        }
-    })
-
-
 }
 
 

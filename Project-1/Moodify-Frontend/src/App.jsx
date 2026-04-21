@@ -1,12 +1,18 @@
-import React from 'react'
-import FaceExpression from './components/FaceExpression'
-import "./index.css"
+
+import { RouterProvider } from  "react-router"
+import { routes } from './Routes'
+import { AuthProvider } from './feature/auth/auth.context'
+
+
+
 
 const App = () => {
   return (
-    <div>
-     <FaceExpression/>
-    </div>
+   
+     <AuthProvider>
+      <RouterProvider router={routes}/>
+     </AuthProvider>
+   
   )
 }
 
