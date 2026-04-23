@@ -1,0 +1,146 @@
+// ─── Design Tokens ───────────────────────────────────────────────────────────
+:root {
+  --bg-primary: #090b13;
+  --bg-secondary: #0f1320;
+  --bg-card: #141826;
+  --bg-elevated: #1a2033;
+
+  --accent-gold: #f5c518;
+  --accent-red: #e63946;
+  --accent-blue: #4cc9f0;
+  --accent-purple: #7b2fff;
+  --accent-glow: rgba(245, 197, 24, 0.15);
+
+  --text-primary: #f0f2f8;
+  --text-secondary: #9aa3b8;
+  --text-muted: #545c75;
+
+  --border: rgba(255, 255, 255, 0.07);
+  --border-hover: rgba(245, 197, 24, 0.3);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --radius-xl: 32px;
+
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 40px rgba(245, 197, 24, 0.12);
+
+  --font-display: 'Bebas Neue', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  --nav-height: 72px;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// ─── Reset & Base ────────────────────────────────────────────────────────────
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+
+  // Subtle grain texture
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+// ─── Scrollbar ───────────────────────────────────────────────────────────────
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 3px;
+  &:hover { background: var(--accent-gold); }
+}
+
+// ─── Utility Classes ─────────────────────────────────────────────────────────
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+
+  @media (max-width: 768px) { padding: 0 16px; }
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  letter-spacing: 0.04em;
+  color: var(--text-primary);
+
+  span {
+    color: var(--accent-gold);
+  }
+}
+
+.badge-new {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: linear-gradient(135deg, var(--accent-red), #ff6b35);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  border-radius: 4px;
+  text-transform: uppercase;
+  animation: badgePulse 2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(230, 57, 70, 0.4); }
+  50% { opacity: 0.9; box-shadow: 0 0 0 6px rgba(230, 57, 70, 0); }
+}
+
+.page-wrapper {
+  padding-top: var(--nav-height);
+  min-height: 100vh;
+}
+
+// ─── Gradient BG overlays ────────────────────────────────────────────────────
+.gradient-bg {
+  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(123,47,255,0.15), transparent),
+              radial-gradient(ellipse 60% 40% at 80% 100%, rgba(76,201,240,0.08), transparent);
+}

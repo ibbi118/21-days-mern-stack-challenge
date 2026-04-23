@@ -1,0 +1,116 @@
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+
+  &--fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--bg-primary);
+    padding: 0;
+  }
+
+  &__spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      font-size: 1.8rem;
+      position: relative;
+      z-index: 1;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+  }
+}
+
+.spinner-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+
+  &:nth-child(1) {
+    border-top-color: var(--accent-gold);
+    animation: spin 1s linear infinite;
+  }
+  &:nth-child(2) {
+    inset: 8px;
+    border-top-color: var(--accent-red);
+    animation: spin 1.4s linear infinite reverse;
+  }
+  &:nth-child(3) {
+    inset: 16px;
+    border-top-color: var(--accent-blue);
+    animation: spin 1.8s linear infinite;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+// Skeleton
+.skeleton-shimmer {
+  background: linear-gradient(90deg,
+    var(--bg-elevated) 25%,
+    rgba(255,255,255,0.06) 50%,
+    var(--bg-elevated) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-card);
+
+  &__poster {
+    aspect-ratio: 2/3;
+    width: 100%;
+  }
+
+  &__info {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__title {
+    height: 16px;
+    width: 80%;
+  }
+
+  &__meta {
+    height: 12px;
+    width: 50%;
+  }
+}
+
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+  }
+}

@@ -1,0 +1,177 @@
+.movie-card {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.35s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(245, 197, 24, 0.15);
+    border-color: rgba(245, 197, 24, 0.2);
+
+    .movie-card__overlay { opacity: 1; }
+    .movie-card__poster img { transform: scale(1.06); }
+    .movie-card__play { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  &__poster {
+    position: relative;
+    aspect-ratio: 2/3;
+    overflow: hidden;
+    background: var(--bg-secondary);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .placeholder-poster {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, var(--bg-secondary), var(--bg-card));
+      
+      span {
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        color: var(--text-muted);
+      }
+    }
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(9,11,19,0.98) 0%, rgba(9,11,19,0.5) 50%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 16px;
+    gap: 10px;
+  }
+
+  &__play {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(245, 197, 24, 0.9);
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(4px);
+  }
+
+  &__overlay-actions {
+    display: flex;
+    gap: 8px;
+
+    button {
+      flex: 1;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      transition: all 0.2s ease;
+
+      &.btn-details {
+        background: var(--accent-gold);
+        color: #000;
+        &:hover { background: #ffd740; }
+      }
+
+      &.btn-fav {
+        background: rgba(255,255,255,0.12);
+        color: var(--text-primary);
+        border: 1px solid rgba(255,255,255,0.12);
+        &:hover { background: rgba(230, 57, 70, 0.3); border-color: var(--accent-red); color: var(--accent-red); }
+        &.active { background: rgba(230, 57, 70, 0.25); color: var(--accent-red); border-color: var(--accent-red); }
+      }
+    }
+  }
+
+  &__info {
+    padding: 14px;
+  }
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent-gold);
+
+    svg { font-size: 0.75rem; }
+  }
+
+  &__year {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  &__type {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(76, 201, 240, 0.15);
+    color: var(--accent-blue);
+  }
+
+  // Sizes
+  &--sm {
+    .movie-card__info { padding: 10px 12px; }
+    .movie-card__title { font-size: 0.82rem; }
+  }
+
+  &--lg {
+    .movie-card__title { font-size: 1rem; }
+    .movie-card__info { padding: 16px; }
+  }
+}
