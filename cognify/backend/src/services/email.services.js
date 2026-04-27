@@ -63,16 +63,15 @@ const sendEmail = async ({ to, subject, html, text }) => {
 
 
 // ✅ 🔥 Registration Email (WITH VERIFY LINK)
-export const sendRegistrationMail = async (user) => {
+export const sendRegistrationMail = async (user,token) => {
 
   // generate token
-  const token = crypto.randomBytes(32).toString("hex");
 
   // 👉 SAVE THIS TOKEN IN DB (important)
   // user.verifyToken = token;
   // await user.save();
 
-  const verifyLink = `http://localhost:3000/verify-email?token=${token}`;
+  const verifyLink = `http://localhost:3000/api/auth/verify-email?token=${token}`;
 
   const content = `
     <h2>Welcome ${user.username} 👋</h2>

@@ -38,3 +38,21 @@ export const registerValidator = [
 
         validate
 ];
+
+
+export const loginValidator = [
+    
+    // ✅ Email validation
+    body("email")
+        .notEmpty().withMessage("Email is required")
+        .isEmail().withMessage("Invalid email format"),
+
+    // ✅ Password validation
+    body("password")
+        .notEmpty().withMessage("Password is required")
+        .isLength({ min: 8 }).withMessage("Password must be at least 8 characters")
+        .matches(/[A-Z]/).withMessage("Password must contain at least one uppercase letter")
+        .matches(/[!@#$%^&*(),.?":{}|<>]/).withMessage("Password must contain at least one special character"),
+
+        validate
+];
