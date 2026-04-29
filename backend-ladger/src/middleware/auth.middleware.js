@@ -1,8 +1,9 @@
+const blacklistModel = require("../models/tokenBlacklist.model");
 const userModel = require("../models/user.models");
 const jwt = require("jsonwebtoken");
 
 async function authMiddleware(req, res, next) {
-  try {
+  
     // Get token from cookie or header
     const token =
       req.cookies?.token ||
@@ -14,6 +15,14 @@ async function authMiddleware(req, res, next) {
       });
     }
 
+     const isBlackist = await blacklistModel.findOne({token})
+      if(isBlackist){
+        return res.status(401).json({
+          message : "Unauthorizes access, token is invalid"
+        })
+      }
+
+      try{
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
@@ -30,7 +39,8 @@ async function authMiddleware(req, res, next) {
     req.user = user;
 
     return next();
-  } catch (err) {
+  } 
+  catch (err) {
     return res.status(401).json({
       message: "Invalid or expired token",
     });
@@ -45,6 +55,13 @@ async function systemMiddleware(req,res,next){
       if(!token){
         return res.status(401).json({
           message : "Token not found"
+        })
+      }
+
+      const isBlackist = await blacklistModel.findOne({token})
+      if(isBlackist){
+        return res.status(401).json({
+          message : "Unauthorizes access, token is invalid"
         })
       }
 

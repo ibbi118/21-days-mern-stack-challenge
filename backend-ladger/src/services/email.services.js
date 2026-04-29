@@ -139,9 +139,76 @@ const sendLoginMail = async (user) => {
   });
 };
 
+// ✅ Transaction Success Email
+const sendTransactionSuccessMail = async (user, txn) => {
+  const content = `
+    <h2>✅ Transaction Successful</h2>
+
+    <p>Hello ${user.username},</p>
+
+    <p>Your transaction has been completed successfully.</p>
+
+    <div style="background:#f9fafb; padding:15px; border-radius:8px;">
+      <p><b>Amount:</b> ${txn.amount}</p>
+      <p><b>Transaction ID:</b> ${txn._id}</p>
+      <p><b>Type:</b> ${txn.type}</p>
+      <p><b>Status:</b> <span style="color:green;">COMPLETED</span></p>
+    </div>
+
+    <p style="margin-top:15px;">
+      Your ledger has been updated securely.
+    </p>
+
+    <a href="http://localhost:3000/dashboard" class="btn">
+      View Dashboard
+    </a>
+  `;
+
+  await sendEmail({
+    to: user.email,
+    subject: "Transaction Successful ✅",
+    html: baseTemplate(content),
+    text: `Transaction of ${txn.amount} completed successfully`,
+  });
+};
+
+
+// ❌ Transaction Failed Email
+const sendTransactionFailedMail = async (user, reason) => {
+  const content = `
+    <h2>❌ Transaction Failed</h2>
+
+    <p>Hello ${user.username},</p>
+
+    <p>Your transaction could not be processed.</p>
+
+    <div style="background:#fff1f2; padding:15px; border-radius:8px;">
+      <p><b>Status:</b> <span style="color:red;">FAILED</span></p>
+      <p><b>Reason:</b> ${reason}</p>
+    </div>
+
+    <p style="margin-top:15px;">
+      Please try again or contact support.
+    </p>
+
+    <a href="http://localhost:3000/support" class="btn">
+      Contact Support
+    </a>
+  `;
+
+  await sendEmail({
+    to: user.email,
+    subject: "Transaction Failed ❌",
+    html: baseTemplate(content),
+    text: `Transaction failed: ${reason}`,
+  });
+};
+
 
 module.exports = {
   sendEmail,
   sendRegistrationMail,
   sendLoginMail,
+  sendTransactionSuccessMail,
+  sendTransactionFailedMail,
 };
