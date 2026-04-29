@@ -29,7 +29,7 @@ async function userRegister(req,res){
 
         const token = jwt.sign({userId : user._id},process.env.JWT_SECRET,{expiresIn : "3d"})
 
-        res.cookie = ("jwt-token",token)
+        res.cookie("token",token)
 
         res.status(201).json({
             message : "User register successfully",
@@ -71,7 +71,7 @@ async function userLogin(req,res){
         })
       }
 
-      const checkPass = userModel.comparePassword(password)
+      const checkPass = findUser.comparePassword(password)
 
       if(!checkPass){
         return res.status(422).json({
@@ -81,8 +81,8 @@ async function userLogin(req,res){
 
        const token = jwt.sign({userId : findUser._id},process.env.JWT_SECRET,{expiresIn : "3d"})
 
-        res.cookie = ("jwt-token",token)
-
+        res.cookie("token",token)
+        
         res.status(200).json({
             message : "User Login successfully",
             user  : {
@@ -93,7 +93,7 @@ async function userLogin(req,res){
         })
 
 
-        emailServices. sendLoginMail(user).catch(err =>
+        emailServices. sendLoginMail(findUser).catch(err =>
          console.error("Login email error:", err)
        );
 
