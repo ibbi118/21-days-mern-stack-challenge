@@ -120,13 +120,13 @@ async function createTransaction(req,res){
 
     session.startTransaction()
 
-    const transaction = await transactionModel.create([{
+    const transaction = (await transactionModel.create([{
        fromAccount,
        toAccount,
        amount,
        idempotencyKey,
        status : "PENDING"
-    }],{session})
+    }],{session}))[0]
     
     const debitLedgerEntry = await ledgerModel.create([{
         account : fromAccount,
@@ -134,6 +134,11 @@ async function createTransaction(req,res){
         transaction : transaction._id,
         type : "DEBIT"
     }],{session})
+
+
+    await(()=>{
+        return new Promise((res)=> setTimeout(res,40*1000));
+    })()
      
     const creditLedgerEntry = await ledgerModel.create([{
     
@@ -144,8 +149,11 @@ async function createTransaction(req,res){
 
     }],{session})
 
-    transaction.status = "COMPLETED"
-    await transaction.save({session})
+    await transactionModel.findByIdAndUpdate(
+    transaction._id,
+    { status: "COMPLETED" },
+    { session }
+)
 
     await session.commitTransaction()
     session.endSession()
@@ -154,8 +162,8 @@ async function createTransaction(req,res){
     const sender = await userModel.findById(fromUserAccount.user)
     const receiver = await userModel.findById(toUserAccount.user)
 
-    sendTransactionSuccessMail(sender, { ...transaction[0]._doc, type: "DEBIT" })
-    sendTransactionSuccessMail(receiver, { ...transaction[0]._doc, type: "CREDIT" })
+  sendTransactionSuccessMail(sender, { ...transaction._doc, type: "DEBIT" })
+ sendTransactionSuccessMail(receiver, { ...transaction._doc, type: "CREDIT" })
 
 
     res.status(202).json({
@@ -165,9 +173,19 @@ async function createTransaction(req,res){
 
     }catch(err){
 
-        await session.abortTransaction()
-        session.endSession()
-
+       if (session.inTransaction()) {
+         await session.abortTransaction();
+       }
+         session.endSession();
+         
+    if (
+        err.message.includes("WriteConflict") ||
+        err.message.includes("Please retry your operation")
+    ) {
+        return res.status(200).json({
+            message: "Transaction is in progress, please wait..."
+        });
+    }
         // ❌ FAILED EMAIL
         try{
             const acc = await accountModel.findById(req.body.fromAccount)
@@ -291,7 +309,31 @@ async function systemInitalFund(req,res){
     }
 }
 
+
+async function getMyTransactions(req, res) {
+  try {
+    const transactions = await transactionModel
+      .find({ user: req.user._id })
+      .sort({ createdAt: -1 }); // latest first
+
+    return res.status(200).json({
+      success: true,
+      count: transactions.length,
+      transactions,
+    });
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch transactions",
+    });
+  }
+}
+
+
+
 module.exports = {
     systemInitalFund,
-    createTransaction
+    createTransaction,
+    getMyTransactions
 }

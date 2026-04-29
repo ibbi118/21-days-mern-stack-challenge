@@ -10,6 +10,8 @@ transactionRouter.post("/",authMiddleware.authMiddleware,transactionController.c
 
 transactionRouter.post("/system/initial-fund",authMiddleware.systemMiddleware,transactionController.systemInitalFund)
 
+transactionRouter.get("/get",authMiddleware.authMiddleware,transactionController.getMyTransactions)
+
 
 
 

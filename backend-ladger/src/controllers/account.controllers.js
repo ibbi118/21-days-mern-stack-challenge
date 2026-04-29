@@ -67,7 +67,8 @@ async function getBalance(req,res){
     })
    }
 
-   const balance = account.getBalance()
+   const balance = await account.getBalance()
+   console.log(balance)
 
    return res.status(200).json({
      message : "Balance Fetched Sucessfully",
