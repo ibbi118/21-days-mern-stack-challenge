@@ -24,7 +24,16 @@ export async function register(req,res,next){
         email,username,password
       })
 
-      const token = jwt.sign({email : user.email},process.env.JWT_SECRET)
+      const token = jwt.sign(
+      { email: user.email },
+      process.env.JWT_SECRET,
+     { expiresIn: "10m" }
+      );
+
+      user.verifyToken = token;
+      user.verifyTokenExpiry = Date.now() + 10 * 60 * 1000;
+
+       await user.save();
 
       sendRegistrationMail(user,token)
 
@@ -115,7 +124,11 @@ export async function verifyEmail(req, res) {
 
     const decode = jwt.verify(token, process.env.JWT_SECRET);
 
-    const user = await userModel.findOne({ email: decode.email });
+    const user = await userModel.findOne({
+          email: decode.email,
+           verifyToken: token,
+           verifyTokenExpiry: { $gt: Date.now() }
+     });
 
     if (!user) {
       return res.status(400).json({
@@ -200,5 +213,41 @@ export async function getMe(req, res) {
       message: "Server Error",
       error: err.message,
     });
+  }
+}
+
+export async function resendVerification(req, res) {
+  try {
+    const userId = req.body.userId; // ya token se nikal
+
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (user.verified) {
+      return res.status(400).json({ message: "Already verified" });
+    }
+
+    const token = jwt.sign(
+      { email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "10m" }
+    );
+
+    user.verifyToken = token;
+    user.verifyTokenExpiry = Date.now() + 10 * 60 * 1000;
+
+    await user.save();
+
+    await sendRegistrationMail(user, token);
+
+    res.json({
+      message: `Verification email sent to ${user.email}`
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: "Error" });
   }
 }
