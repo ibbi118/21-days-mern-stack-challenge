@@ -26,7 +26,7 @@ const useAuth = () => {
             dispatch(setLoading(true));
 
             const user = await login({ email, password });
-            console.log(user)
+            
 
             dispatch(setUser(user));
 
